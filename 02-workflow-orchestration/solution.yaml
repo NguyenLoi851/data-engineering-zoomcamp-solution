@@ -1,0 +1,39 @@
+id: 12_gcp_taxi_batch_loader
+namespace: zoomcamp
+description: Batch loader for NYC taxi data across taxi types and months for a specific year.
+
+inputs:
+  - id: year
+    type: SELECT
+    displayName: Select year
+    values: ["2019", "2020", "2021"]
+    defaults: "2021"
+    allowCustomValue: true
+
+tasks:
+  - id: for_each_taxi
+    type: io.kestra.plugin.core.flow.ForEach
+    values: ["yellow", "green"]
+    tasks:
+      - id: for_each_month
+        type: io.kestra.plugin.core.flow.ForEach
+        values: ["01", "02", "03", "04", "05", "06", "07"]
+        tasks:
+          - id: load_data
+            type: io.kestra.plugin.core.flow.Subflow
+            namespace: zoomcamp
+            flowId: 08_gcp_taxi
+            wait: true  # Wait for subflow completion before proceeding
+            transmitFailed: true  # Propagate failures from subflow
+            inputs:
+              taxi: "{{ parents[0].taskrun.value }}"
+              year: "{{ inputs.year }}"
+              month: "{{ taskrun.value }}"
+
+pluginDefaults:
+  - type: io.kestra.plugin.gcp
+    values:
+      serviceAccount: "{{kv('GCP_CREDS')}}"
+      projectId: "{{kv('GCP_PROJECT_ID')}}"
+      location: "{{kv('GCP_LOCATION')}}"
+      bucket: "{{kv('GCP_BUCKET_NAME')}}"
