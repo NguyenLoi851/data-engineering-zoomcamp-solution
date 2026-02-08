@@ -1,0 +1,40 @@
+sources:
+  - name: raw
+    description: Raw taxi trip data from NYC TLC
+    database: |
+      {%- if target.type == 'bigquery' -%}
+        {{ env_var('GCP_PROJECT_ID', 'dbt-study-486006') }}
+      {%- else -%}
+        taxi_rides_ny
+      {%- endif -%}
+    schema: |
+      {%- if target.type == 'bigquery' -%}
+        fhv_us
+      {%- else -%}
+        prod
+      {%- endif -%}
+    # freshness:
+    #   warn_after: {count: 24, period: hour}
+    #   error_after: {count: 48, period: hour}
+    tables:
+      - name: raw_fhv_tripdata
+        description: Raw fhv taxi trip records
+        # loaded_at_field: pickup_datetime
+        columns:
+          - name: dispatching_base_num
+            description: " - Note: Raw data may contain nulls, filtered in staging"
+          - name: pickup_datetime
+            description: Date and time when the meter was engaged
+            data_tests:
+              - not_null
+          - name: dropOff_datetime
+            description: Date and time when the meter was disengaged
+          - name: PUlocationID
+            description: PUlocationID
+          - name: DOlocationID
+            description: DOlocationID
+          - name: SR_Flag
+            description: SR_Flag
+          - name: Affiliated_base_number
+            description: Affiliated_base_number
+          

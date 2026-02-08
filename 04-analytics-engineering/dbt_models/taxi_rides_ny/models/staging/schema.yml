@@ -1,0 +1,23 @@
+models:
+  - name: stg_fhv_tripdata
+    description: >
+      Staging model for fhv taxi trip data. This model standardizes column names
+      and data types from the raw fhv_tripdata source, providing a clean foundation
+      for downstream transformations.
+    columns:
+      - name: dispatching_base_num
+        description: dispatching_base_num
+        data_tests:
+          - not_null
+      - name: pickup_datetime
+        description: pickup_datetime
+      - name: dropoff_datetime
+        description: dropoff_datetime
+      - name: pickup_location_id
+        description: pickup_location_id
+      - name: dropoff_location_id
+        description: dropoff_location_id
+      - name: store_and_fwd_flag
+        description: store_and_fwd_flag
+      - name: affiliated_base_number
+        description: affiliated_base_number
