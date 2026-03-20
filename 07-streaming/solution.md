@@ -214,7 +214,10 @@ How many trips were in the longest session?
 - 81
 
 **Solution**
-```bash
+```sql
+SELECT num_trips
+FROM public.processed_events_aggregated_session
+order by window_end - window_start desc;
 D
 ```
 
@@ -231,7 +234,10 @@ Which hour had the highest total tip amount?
 - 2025-10-30 16:00:00
 
 **Solution**
-```bash
+```sql
+select * 
+from public.processed_events_aggregated_tumbled_tip
+order by total_tip;
 B
 ```
 
